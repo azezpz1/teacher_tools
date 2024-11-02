@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "teacher-tools"
+version = "0.1.0"
+description = "Website of tools useful for teachers."
+authors = ["Anthony Panettiere <apanettiere@fastmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+Django = "^5.1.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+mypy = "^1.13.0"
+flake8 = "^7.1.1"
+pytest = "^8.3.3"
+pytest-django = "^4.9.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
