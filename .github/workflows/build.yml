@@ -1,0 +1,40 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.13]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+    - name: Install Dependencies
+      run: |
+        poetry install
+    - name: Run black
+      run : |
+        poetry run black .
+    - name: Run flake8
+      run: |
+        poetry run flake8 .
+    - name: Run mypy
+      run: |
+        poetry run mypy .
+    - name: Run pytest
+      run: |
+        poetry run pytest .
