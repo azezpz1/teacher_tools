@@ -1,0 +1,14 @@
+<!-- seat_arranger/templates/seat_arranger/add_class_period.html -->
+{% extends "core/base.html" %} {% block content %}
+<h2>Add Class Period</h2>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Save Class Period</button>
+</form>
+{% if messages %}
+<ul>
+  {% for message in messages %}
+  <li>{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %} {% endblock %}
