@@ -15,8 +15,6 @@ Django = "^5.1.2"
 black = "^24.10.0"
 mypy = "^1.13.0"
 flake8 = "^7.1.1"
-pytest = "^8.3.3"
-pytest-django = "^4.9.0"
 flake8-bugbear = "^24.10.31"
 django-stubs = "^5.1.1"
 
