@@ -20,6 +20,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),  # Includes login, logout, etc.
     path('', include('core.urls')),  # This sets the core app as the root
 
 ]
