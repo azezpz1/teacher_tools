@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+
+from seat_arranger.seating import create_seating_arrangement
 from .forms import ClassPeriodForm
 from .models import ClassPeriod, Student
 
@@ -32,3 +34,11 @@ def add_class_period(request):
     else:
         form = ClassPeriodForm()
     return render(request, "seat_arranger/add_class_period.html", {"form": form})
+
+
+@login_required
+def classroom(request):
+    # Example student list - in practice, you'd get this from your database
+    students = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Henry"]
+    seating = create_seating_arrangement(students)
+    return render(request, "seat_arranger/classroom.html", {"seating": seating})
