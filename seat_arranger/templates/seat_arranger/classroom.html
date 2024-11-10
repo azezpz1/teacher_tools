@@ -1,5 +1,5 @@
 <!-- seating/templates/seating/classroom.html -->
-{% extends "core/base.html" %} {% block content %}
+{% extends "core/base.html" %} {% block content %} {% csrf_token %}
 <div style="max-width: 1000px; margin: 0 auto; padding: 20px">
   <div style="margin-bottom: 20px">
     <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 16px">
@@ -56,10 +56,9 @@
   </div>
 </div>
 
-{% comment %}
 <script>
   function reshuffleSeats() {
-    fetch('{% url "reshuffle_seats" %}', {
+    fetch('{% url "seat_arranger:reshuffle_seats" %}', {
       method: "POST",
       headers: {
         "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
@@ -72,4 +71,4 @@
       });
   }
 </script>
-{% endcomment %} {% endblock %}
+{% endblock %}

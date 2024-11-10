@@ -1,6 +1,8 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 from seat_arranger.seating import create_seating_arrangement
 from .forms import ClassPeriodForm
@@ -42,3 +44,9 @@ def classroom(request):
     students = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Henry"]
     seating = create_seating_arrangement(students)
     return render(request, "seat_arranger/classroom.html", {"seating": seating})
+
+
+@require_POST
+def reshuffle_seats(request):
+    # For now, just return success - we'll add actual reshuffling later
+    return JsonResponse({"success": True})
