@@ -48,5 +48,4 @@ def classroom(request):
 
 @require_POST
 def reshuffle_seats(request):
-    # For now, just return success - we'll add actual reshuffling later
     return JsonResponse({"success": True})
