@@ -4,16 +4,104 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}My Site{% endblock %}</title>
+    <style>
+      /* Basic CSS for the layout */
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 250px;
+        background-color: #2c3e50;
+        color: white;
+        padding: 20px;
+      }
+
+      .sidebar-nav {
+        list-style: none;
+        padding: 0;
+      }
+
+      .sidebar-nav li {
+        margin-bottom: 10px;
+      }
+
+      .sidebar-nav a {
+        color: white;
+        text-decoration: none;
+        padding: 10px;
+        display: block;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar-nav a:hover {
+        background-color: #34495e;
+      }
+
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background-color: #3498db;
+        color: white;
+        padding: 1rem;
+      }
+
+      main {
+        flex: 1;
+        padding: 20px;
+      }
+
+      footer {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
-    <header>
-      <h1>Welcome to My Site</h1>
-    </header>
+    <nav class="sidebar">
+      <h2>Teacher Tools</h2>
+      <ul class="sidebar-nav">
+        <li><a href="{% url 'homepage' %}">Home</a></li>
+        {% if user.is_authenticated %}
+        <li>
+          <a href="{% url 'seat_arranger:add_class_period' %}"
+            >Add Class Period</a
+          >
+        </li>
+        {% for period in user.class_periods.all %}
+        <li>
+          <a href="{% url 'seat_arranger:classroom' period.period_number %}"
+            >Period {{ period.period_number }}</a
+          >
+        </li>
+        {% endfor %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
 
-    <main>{% block content %}{% endblock %}</main>
+    <div class="main-content">
+      <header>
+        <h1>Welcome to Teacher Tools</h1>
+      </header>
 
-    <footer>
-      <p>&copy; 2024 My Site</p>
-    </footer>
+      <main>{% block content %}{% endblock %}</main>
+
+      <footer>
+        <p>&copy; 2024 Teacher Tools</p>
+      </footer>
+    </div>
   </body>
 </html>

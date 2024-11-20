@@ -1,16 +1,11 @@
 <!-- core/templates/core/homepage.html -->
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homepage</title>
-  </head>
-  <body>
-    <h1>Welcome to the Homepage!</h1>
-    <a href="{% url 'register' %}">Create an Account</a>
-    <a href="{% url 'login' %}">Login</a>
-    <a href="{% url 'seat_arranger:add_class_period' %}">Add a class period</a>
-    <a href="{% url 'seat_arranger:classroom' %}">View classroom</a>
-  </body>
-</html>
+{% extends "core/base.html" %} {% block content %}
+<div>
+  <h2>Welcome to Teacher Tools!</h2>
+  {% if user.is_authenticated %}
+  <p>Welcome back, {{ user.username }}!</p>
+  {% else %}
+  <p>Please login or create an account to get started.</p>
+  {% endif %}
+</div>
+{% endblock %}
