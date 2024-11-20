@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from .forms import CustomUserCreationForm
 
@@ -19,3 +19,10 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, "core/register.html", {"form": form})
+
+
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect('homepage')
+    return render(request, 'registration/logout.html')
