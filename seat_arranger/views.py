@@ -3,8 +3,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_POST
-from django.db.models import Count
-from django.db import models
 
 from seat_arranger.seating import create_seating_arrangement
 from .forms import ClassPeriodForm
