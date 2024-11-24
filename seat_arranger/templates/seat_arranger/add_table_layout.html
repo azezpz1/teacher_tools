@@ -1,0 +1,127 @@
+{% extends 'core/base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2>Classroom Table Layout</h2>
+
+  <div class="mb-3">
+    <label for="width">Width (number of tables):</label>
+    <input
+      type="number"
+      id="width"
+      value="{{ width }}"
+      min="1"
+      max="15"
+      class="form-control"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="depth">Depth (number of tables):</label>
+    <input
+      type="number"
+      id="depth"
+      value="{{ depth }}"
+      min="1"
+      max="15"
+      class="form-control"
+    />
+  </div>
+
+  <button onclick="updateGrid()" class="btn btn-secondary mb-3">
+    Update Grid Size
+  </button>
+
+  <div id="grid" class="mb-3">
+    <!-- Grid will be generated here -->
+  </div>
+
+  <button onclick="saveLayout()" class="btn btn-primary">Save Layout</button>
+</div>
+
+<style>
+  .table-cell {
+    width: 60px;
+    height: 60px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin: 2px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+  }
+
+  .table-cell.active {
+    background-color: #007bff;
+  }
+
+  .grid-row {
+    white-space: nowrap;
+  }
+</style>
+
+<script>
+  let layout = {{ layout|safe }};
+
+  function createGrid() {
+    const width = parseInt(document.getElementById('width').value);
+    const depth = parseInt(document.getElementById('depth').value);
+    const gridDiv = document.getElementById('grid');
+    gridDiv.innerHTML = '';
+
+    for (let i = 0; i < depth; i++) {
+      const row = document.createElement('div');
+      row.className = 'grid-row';
+
+      for (let j = 0; j < width; j++) {
+        const cell = document.createElement('div');
+        cell.className = 'table-cell';
+        const index = i * width + j;
+        if (layout[index]) {
+          cell.classList.add('active');
+        }
+        cell.onclick = () => toggleCell(cell, index);
+        row.appendChild(cell);
+      }
+
+      gridDiv.appendChild(row);
+    }
+  }
+
+  function toggleCell(cell, index) {
+    cell.classList.toggle('active');
+    layout[index] = !layout[index];
+  }
+
+  function updateGrid() {
+    const width = parseInt(document.getElementById('width').value);
+    const depth = parseInt(document.getElementById('depth').value);
+    layout = new Array(width * depth).fill(true);
+    createGrid();
+  }
+
+  function saveLayout() {
+    const width = parseInt(document.getElementById('width').value);
+    const depth = parseInt(document.getElementById('depth').value);
+
+    fetch('{% url "seat_arranger:add_table_layout" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: new URLSearchParams({
+        'width': width,
+        'depth': depth,
+        'layout[]': layout
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert('Layout saved successfully!');
+      }
+    });
+  }
+
+  // Initial grid creation
+  createGrid();
+</script>
+{% endblock %}
