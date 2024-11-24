@@ -66,6 +66,9 @@
     const gridDiv = document.getElementById('grid');
     gridDiv.innerHTML = '';
 
+    // Initialize layout as a proper dense array
+    layout = new Array(width * depth).fill(true);
+
     for (let i = 0; i < depth; i++) {
       const row = document.createElement('div');
       row.className = 'grid-row';
@@ -87,12 +90,14 @@
 
   function toggleCell(cell, index) {
     cell.classList.toggle('active');
-    layout[index] = !layout[index];
+    // Ensure we're using boolean values
+    layout[index] = cell.classList.contains('active');
   }
 
   function updateGrid() {
     const width = parseInt(document.getElementById('width').value);
     const depth = parseInt(document.getElementById('depth').value);
+    // Initialize with all true values
     layout = new Array(width * depth).fill(true);
     createGrid();
   }
@@ -101,23 +106,33 @@
     const width = parseInt(document.getElementById('width').value);
     const depth = parseInt(document.getElementById('depth').value);
 
+    const formData = new FormData();
+    formData.append('width', width);
+    formData.append('depth', depth);
+
+    // Ensure we have a complete array before sending
+    const fullLayout = new Array(width * depth).fill(false);
+    for (let i = 0; i < layout.length; i++) {
+      fullLayout[i] = Boolean(layout[i]);
+    }
+
+    // Send the complete array
+    fullLayout.forEach((value) => {
+      formData.append('layout[]', value);
+    });
+
     fetch('{% url "seat_arranger:add_table_layout" %}', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRFToken': '{{ csrf_token }}'
-      },
-      body: new URLSearchParams({
-        'width': width,
-        'depth': depth,
-        'layout[]': layout
-      })
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
-      if (data.status === 'success') {
-        alert('Layout saved successfully!');
-      }
+        if (data.status === 'success') {
+            alert('Layout saved successfully!');
+        }
     });
   }
 

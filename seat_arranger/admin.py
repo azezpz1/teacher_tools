@@ -1,6 +1,6 @@
 # seat_arranger/admin.py
 from django.contrib import admin
-from .models import ClassPeriod, Student
+from .models import ClassPeriod, Student, TableLayout
 
 
 # Inline admin for adding students directly within ClassPeriod
@@ -20,3 +20,9 @@ class ClassPeriodAdmin(admin.ModelAdmin):
 class StudentAdmin(admin.ModelAdmin):
     list_display = ("name", "class_period")
     list_filter = ("class_period",)
+
+
+@admin.register(TableLayout)
+class TableLayoutAdmin(admin.ModelAdmin):
+    list_display = ("user", "width", "depth", "created_at", "updated_at")
+    search_fields = ("user__username",)
