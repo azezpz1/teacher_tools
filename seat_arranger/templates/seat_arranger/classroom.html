@@ -8,27 +8,38 @@
     </button>
   </div>
 
+  {% if messages %}
+  <div class="messages mb-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <div
-    class="row g-4"
-    style="grid-template-columns: repeat({{ seating.cols }}, 1fr);"
+    class="classroom-grid"
+    style="display: grid; grid-template-columns: repeat({{ seating.cols }}, 1fr); gap: 1rem;"
   >
-    {% for row in seating.grid %} {% for seat in row %} {% if seat %}
-    <div class="col">
-      <div class="card h-100 border-primary">
-        <div class="card-body text-center">
-          <h5 class="card-title mb-2">{{ seat.name }}</h5>
-          <p class="card-text text-muted small">
-            Row {{ seat.position.row|add:1 }}, Col {{ seat.position.col|add:1 }}
-          </p>
-        </div>
+    {% for row in seating.grid %} {% for cell in row %} {% if cell %} {% if
+    cell.empty %}
+    <div class="card h-100 border-secondary bg-light">
+      <div class="card-body text-center">
+        <p class="card-text text-muted">Empty Seat</p>
       </div>
     </div>
     {% else %}
-    <div class="col">
-      <div class="card h-100 border-secondary bg-light">
-        <div class="card-body text-center">
-          <p class="card-text text-muted">Empty</p>
-        </div>
+    <div class="card h-100 border-primary">
+      <div class="card-body text-center">
+        <h5 class="card-title mb-2">{{ cell.name }}</h5>
+        <p class="card-text text-muted small">
+          Row {{ cell.position.row|add:1 }}, Col {{ cell.position.col|add:1 }}
+        </p>
+      </div>
+    </div>
+    {% endif %} {% else %}
+    <div class="card h-100 border-0 bg-transparent">
+      <div class="card-body text-center">
+        <p class="card-text text-muted">No Table</p>
       </div>
     </div>
     {% endif %} {% endfor %} {% endfor %}
@@ -46,7 +57,9 @@
     })
       .then((response) => response.json())
       .then((data) => {
-        location.reload();
+        if (data.success) {
+          location.reload();
+        }
       });
   }
 </script>

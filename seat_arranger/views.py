@@ -40,11 +40,36 @@ def add_class_period(request):
 
 @login_required
 def classroom(request, period_number):
+    # First check if table layout exists
+    try:
+        table_layout = TableLayout.objects.get(user=request.user)
+    except TableLayout.DoesNotExist:
+        messages.warning(request, "Please set up your classroom layout first")
+        return redirect("seat_arranger:add_table_layout")
+
+    # Get class period and students
     class_period = get_object_or_404(
         ClassPeriod, user=request.user, period_number=period_number
     )
     students = list(class_period.students.values_list("name", flat=True))
-    seating = create_seating_arrangement(students)
+
+    # Count available seats (True values in layout)
+    available_seats = sum(1 for x in table_layout.layout if x)
+
+    # Check if we have enough seats
+    if len(students) > available_seats:
+        messages.error(
+            request,
+            f"Your classroom layout has {available_seats} seats, but you have {len(students)} students. "
+            "Please update your layout to accommodate all students.",
+        )
+        return redirect("seat_arranger:add_table_layout")
+
+    # Create seating arrangement using table layout
+    seating = create_seating_arrangement(
+        students, table_layout.width, table_layout.depth, table_layout.layout
+    )
+
     return render(
         request,
         "seat_arranger/classroom.html",

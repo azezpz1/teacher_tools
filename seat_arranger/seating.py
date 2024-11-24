@@ -15,37 +15,47 @@ def calculate_grid_dimensions(num_students):
     return rows, cols
 
 
-def create_seating_arrangement(student_names):
-    """Create a seating arrangement grid from a list of student names."""
+def create_seating_arrangement(student_names, width, depth, layout):
+    """Create a seating arrangement grid respecting the table layout."""
     # Shuffle the student names
     shuffled_students = student_names.copy()
     random.shuffle(shuffled_students)
-
-    # Calculate grid dimensions
-    rows, cols = calculate_grid_dimensions(len(student_names))
 
     # Create the grid
     grid = []
     student_idx = 0
 
-    for i in range(rows):
+    for i in range(depth):
         row = []
-        for j in range(cols):
-            if student_idx < len(shuffled_students):
-                row.append(
-                    {
-                        "name": shuffled_students[student_idx],
-                        "position": {"row": i, "col": j},
-                    }
-                )
-                student_idx += 1
+        for j in range(width):
+            layout_idx = i * width + j
+            if layout[layout_idx]:  # If there's a table at this position
+                if student_idx < len(shuffled_students):
+                    # Add a student
+                    row.append(
+                        {
+                            "name": shuffled_students[student_idx],
+                            "position": {"row": i, "col": j},
+                        }
+                    )
+                    student_idx += 1
+                else:
+                    # Empty seat at a valid table
+                    row.append(
+                        {
+                            "name": "Empty Seat",
+                            "position": {"row": i, "col": j},
+                            "empty": True,
+                        }
+                    )
             else:
-                row.append(None)  # Empty seat
+                # No table at this position
+                row.append(None)
         grid.append(row)
 
     return {
         "grid": grid,
-        "rows": rows,
-        "cols": cols,
+        "rows": depth,
+        "cols": width,
         "total_students": len(student_names),
     }
