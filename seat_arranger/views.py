@@ -83,13 +83,13 @@ def add_table_layout(request):
         initial_data = {
             "width": layout.width,
             "depth": layout.depth,
-            "layout": layout.layout,
+            "layout": ["true" if x else "false" for x in layout.layout],
         }
     except TableLayout.DoesNotExist:
         initial_data = {
             "width": 5,
             "depth": 5,
-            "layout": [True] * (5 * 5),  # Default 5x5 grid, all tables present
+            "layout": ["true"] * (5 * 5),  # Default 5x5 grid, all tables present
         }
 
     return render(request, "seat_arranger/add_table_layout.html", initial_data)
