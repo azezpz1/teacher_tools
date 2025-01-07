@@ -1,3 +1,4 @@
+import logging
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -8,31 +9,47 @@ from seat_arranger.seating import create_seating_arrangement
 from .forms import ClassPeriodForm
 from .models import ClassPeriod, Student, TableLayout
 
+logger = logging.getLogger("seat_arranger")
+
 
 @login_required
 def add_class_period(request):
     if request.method == "POST":
+        logger.info(f"Adding/updating class period for user {request.user.username}")
         form = ClassPeriodForm(request.POST)
         if form.is_valid():
             period_number = form.cleaned_data["period_number"]
             student_names = form.cleaned_data["student_names"].splitlines()
+            logger.info(
+                f"Processing period {period_number} with {len(student_names)} students"
+            )
 
-            class_period, _ = ClassPeriod.objects.get_or_create(
+            class_period, created = ClassPeriod.objects.get_or_create(
                 user=request.user, period_number=period_number
             )
+            if created:
+                logger.info(f"Created new class period {period_number}")
+            else:
+                logger.info(f"Updating existing class period {period_number}")
 
             # Clear existing students to allow updates
             class_period.students.all().delete()
+            logger.info("Cleared existing students")
 
             # Add each name as a Student object
+            student_count = 0
             for name in student_names:
                 if name.strip():  # Ignore empty lines
                     Student.objects.create(class_period=class_period, name=name.strip())
+                    student_count += 1
+            logger.info(f"Added {student_count} students to period {period_number}")
 
             messages.success(
                 request, f"Class Period {period_number} saved successfully!"
             )
             return redirect("seat_arranger:add_class_period")
+        else:
+            logger.warning(f"Invalid form submission: {form.errors}")
     else:
         form = ClassPeriodForm()
     return render(request, "seat_arranger/add_class_period.html", {"form": form})
@@ -40,10 +57,14 @@ def add_class_period(request):
 
 @login_required
 def classroom(request, period_number):
+    logger.info(
+        f"Accessing classroom view for period {period_number} by user {request.user.username}"
+    )
     # First check if table layout exists
     try:
         table_layout = TableLayout.objects.get(user=request.user)
     except TableLayout.DoesNotExist:
+        logger.warning(f"No table layout found for user {request.user.username}")
         messages.warning(request, "Please set up your classroom layout first")
         return redirect("seat_arranger:add_table_layout")
 
@@ -79,11 +100,13 @@ def classroom(request, period_number):
 
 @require_POST
 def reshuffle_seats(request):
+    logger.info(f"Reshuffling seats for user {request.user.username}")
     return JsonResponse({"success": True})
 
 
 @login_required
 def add_table_layout(request):
+    logger.info(f"Accessing table layout view for user {request.user.username}")
     if request.method == "POST":
         width = int(request.POST.get("width"))
         depth = int(request.POST.get("depth"))
