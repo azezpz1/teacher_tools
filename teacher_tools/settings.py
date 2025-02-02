@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 import dj_database_url
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -180,3 +182,15 @@ LOGGING = {
         },
     },
 }
+
+# Sentry Configuration
+sentry_sdk.init(
+    dsn=os.environ.get("SENTRY_DSN"),
+    integrations=[
+        DjangoIntegration(),
+    ],
+    # Disable performance monitoring since it's not in free plan
+    traces_sample_rate=0.0,
+    # Don't send PII data
+    send_default_pii=False,
+)
