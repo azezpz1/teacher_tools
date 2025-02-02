@@ -13,18 +13,22 @@ def homepage(request):
 
 
 def register(request):
+    logger.info("=== Register view accessed ===")
     if request.method == "POST":
         logger.info("Processing new user registration")
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Log the user in right after registering
+            login(request, user)
             logger.info(f"New user registered successfully: {user.username}")
             messages.success(request, "Account created successfully!")
-            return redirect("homepage")  # Redirect to your homepage or desired page
+            return redirect("homepage")
         else:
-            logger.warning(f"Registration failed: {form.errors}")
+            logger.warning(f"=== Registration failed with errors: {form.errors} ===")
+            for field, errors in form.errors.items():
+                logger.warning(f"Field '{field}' errors: {errors}")
     else:
+        logger.info("=== Displaying registration form ===")
         form = CustomUserCreationForm()
     return render(request, "core/register.html", {"form": form})
 
