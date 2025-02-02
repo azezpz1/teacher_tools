@@ -152,37 +152,31 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
+            "format": "[DJANGO] %(levelname)s %(asctime)s %(module)s %(message)s",
+            "style": "%",
         },
     },
     "handlers": {
-        "file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": "teacher_tools.log",
-            "formatter": "verbose",
-        },
         "console": {
-            "level": "INFO",
             "class": "logging.StreamHandler",
-            "formatter": "simple",
+            "formatter": "verbose",
+            "level": "DEBUG",
         },
     },
     "loggers": {
-        "seat_arranger": {
-            "handlers": ["file", "console"],
-            "level": "INFO",
-            "propagate": True,
+        "": {
+            "handlers": ["console"],
+            "level": "DEBUG",
         },
         "core": {
-            "handlers": ["file", "console"],
-            "level": "INFO",
+            "handlers": ["console"],
+            "level": "DEBUG",
             "propagate": True,
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
 }
