@@ -9,7 +9,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-Django = "^5.2.1"
+Django = "^5.2.4"
 whitenoise = "^6.9.0"
 gunicorn = "^23.0.0"
 psycopg2-binary = "^2.9.10"
