@@ -21,7 +21,7 @@ black = "^25.1.0"
 mypy = "^1.18.1"
 flake8 = "^7.3.0"
 flake8-bugbear = "^24.12.12"
-django-stubs = "^5.2.1"
+django-stubs = "^5.2.5"
 
 [build-system]
 requires = ["poetry-core"]
